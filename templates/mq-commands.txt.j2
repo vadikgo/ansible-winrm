@@ -1,4 +1,4 @@
-define listener(TCP.LISTENER) trptype(tcp) control(qmgr) port(1414)
+define listener(TCP.LISTENER) trptype(tcp) control(qmgr) port(1415)
 start listener(TCP.LISTENER)
 DEFINE CHANNEL(SYSTEM.ADMIN.SVRCONN) CHLTYPE (SVRCONN)
 DEFINE CHANNEL({{mq_queue_name}}.SRVCONN) CHLTYPE(SVRCONN) TRPTYPE(TCP) MCAUSER(' ') DESCR('Server connection channel for clients')
