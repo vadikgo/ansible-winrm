@@ -1,0 +1,21 @@
+---
+- hosts: mq
+  tasks:
+      - name: Copy template with MQ
+        template: src=templates/mq-commands.txt.j2 dest=/tmp/mq-commands.txt
+
+      - name: Configure MQ
+        shell: echo /opt/mqm/bin/runmqsc < /tmp/mq-commands.txt
+        register: mq_config
+        failed_when: mq_config.rc not in [0, 10]
+
+      - name: Give group '{{mq_user}}' full administrative access on WebSphere MQ
+        shell: echo /opt/mqm/bin/{{item}}
+        with_items:
+          - setmqaut -m {{mq_queue_name}}.queue.manager -t qmgr -p "{{mq_user}}" +connect +inq +alladm
+          - setmqaut -m {{mq_queue_name}}.queue.manager -t q -n "SYSTEM.**" -p "{{mq_user}}" +dsp +get +browse +inq +put
+          - setmqaut -m {{mq_queue_name}}.queue.manager -t q -n "ESB.OCP.**" -p "{{mq_user}}" +dsp +get +browse +inq +put
+          - setmqaut -m {{mq_queue_name}}.queue.manager -t q -n "STORM" -p "{{mq_user}}" +dsp +get +browse +inq +put
+  vars:
+      mq_queue_name: QM_IFT
+      mq_user: mqadmin
