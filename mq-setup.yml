@@ -9,18 +9,18 @@
         template: src=templates/mq-commands.txt.j2 dest=/tmp/mq-commands.txt
 
       - name: Create new Queue Manager
-        shell: echo /opt/mqm/bin/{{item}}
+        shell: /opt/mqm/bin/{{item}}
         with_items:
           - crtmqm {{mq_qmgr_name}}
           - strmqm {{mq_qmgr_name}}
         
       - name: Configure MQ
-        shell: echo /opt/mqm/bin/runmqsc {{mq_qmgr_name}} < /tmp/mq-commands.txt
+        shell: /opt/mqm/bin/runmqsc {{mq_qmgr_name}} < /tmp/mq-commands.txt
         register: mq_config
         failed_when: mq_config.rc not in [0, 10]
 
       - name: Give group '{{mq_mcauser}}' full administrative access on WebSphere MQ
-        shell: echo /opt/mqm/bin/{{item}}
+        shell: /opt/mqm/bin/{{item}}
         with_items:
           - setmqaut -m {{mq_qmgr_name}} -t qmgr -p "{{mq_mcauser}}" +connect +inq +dsp
           - setmqaut -m {{mq_qmgr_name}} -t q -n "SYSTEM.ADMIN.COMMAND.QUEUE" -p "{{mq_mcauser}}" +dsp +inq +put
@@ -33,9 +33,3 @@
           - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.SLOW.OUT" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
           - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.SLOW.REQUEST" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
           - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.SLOW.RESPONSE" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          
-      - name: echo stile!
-        shell: echo {{item}}
-        with_items:
-          - test
-          - test1
