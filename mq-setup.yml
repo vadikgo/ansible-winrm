@@ -19,7 +19,8 @@
           - setmqaut -m {{mq_queue_name}}.queue.manager -t qmgr -p "{{mq_user}}" +connect +inq +alladm
           - setmqaut -m {{mq_queue_name}}.queue.manager -t q -n "SYSTEM.**" -p "{{mq_user}}" +dsp +get +browse +inq +put
           - setmqaut -m {{mq_queue_name}}.queue.manager -t q -n "ESB.OCP.**" -p "{{mq_user}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_queue_name}}.queue.manager -t q -n "STORM" -p "{{mq_user}}" +dsp +get +browse +inq +put
+          - setmqaut -m {{mq_queue_name}}.queue.manager -t q -n "{{mq_queue}}" -p "{{mq_user}}" +dsp +get +browse +inq +put
   vars:
+      mq_queue: STORM
       mq_queue_name: QM_IFT
       mq_user: mqadmin
