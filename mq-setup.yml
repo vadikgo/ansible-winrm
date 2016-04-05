@@ -1,8 +1,8 @@
 ---
 - hosts: all
   tasks:
-      - name: Hello message
-        shell: echo Hello
+      - name: Hello world!
+        shell: echo Hello World!
 - hosts: mq
   tasks:
       - name: Copy template with MQ
