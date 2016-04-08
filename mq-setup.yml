@@ -5,6 +5,9 @@
       mq_admuser: mqadmin
       mq_qmgr_name: M99.FMB.GW1
   tasks:
+      - name: Add {{mq_admuser}} user
+        user: name={{mq_admuser}} shell=/bin/bash group=mqm
+        
       - name: Copy template with MQ
         template: src=templates/mq-commands.txt.j2 dest=/tmp/mq-commands.txt
 
@@ -13,7 +16,7 @@
         with_items:
           - crtmqm {{mq_qmgr_name}}
           - strmqm {{mq_qmgr_name}}
-        
+
       - name: Configure MQ
         shell: /opt/mqm/bin/runmqsc {{mq_qmgr_name}} < /tmp/mq-commands.txt
         register: mq_config
