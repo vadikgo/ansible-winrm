@@ -1,2 +1,2 @@
-[mq]
-SBT-OASIB-256 ansible_host=10.116.98.13
+[windows]
+SBT-OASIB-248 ansible_host=10.211.55.80

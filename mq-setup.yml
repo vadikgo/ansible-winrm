@@ -1,38 +1,8 @@
 ---
-- hosts: mq
+- hosts: all
   vars:
       mq_mcauser: ovp
       mq_admuser: mqadmin
-      mq_qmgr_name: M99.FMB.GW1
   tasks:
-      - name: Add {{mq_admuser}} user
-        user: name={{mq_admuser}} shell=/bin/bash group=mqm
-        
-      - name: Copy template with MQ
-        template: src=templates/mq-commands.txt.j2 dest=/tmp/mq-commands.txt
-
-      - name: Create new Queue Manager
-        shell: /opt/mqm/bin/{{item}}
-        with_items:
-          - crtmqm {{mq_qmgr_name}}
-          - strmqm {{mq_qmgr_name}}
-
-      - name: Configure MQ
-        shell: /opt/mqm/bin/runmqsc {{mq_qmgr_name}} < /tmp/mq-commands.txt
-        register: mq_config
-        failed_when: mq_config.rc not in [0, 10]
-
-      - name: Give group '{{mq_mcauser}}' full administrative access on WebSphere MQ
-        shell: /opt/mqm/bin/{{item}}
-        with_items:
-          - setmqaut -m {{mq_qmgr_name}} -t qmgr -p "{{mq_mcauser}}" +connect +inq +dsp
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "SYSTEM.ADMIN.COMMAND.QUEUE" -p "{{mq_mcauser}}" +dsp +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "SYSTEM.MQEXPLORER.REPLY.MODEL" -p "{{mq_mcauser}}" +dsp +inq +get
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.NORMAL.IN" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.NORMAL.OUT" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.NORMAL.REQUEST" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.NORMAL.RESPONSE" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.SLOW.IN" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.SLOW.OUT" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.SLOW.REQUEST" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
-          - setmqaut -m {{mq_qmgr_name}} -t q -n "ESB.OCP.SLOW.RESPONSE" -p "{{mq_mcauser}}" +dsp +get +browse +inq +put
+      - name: Show ipconfig
+        raw: ipconfig
