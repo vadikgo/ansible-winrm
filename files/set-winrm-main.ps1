@@ -1,8 +1,12 @@
 # join all scripts to one command
 
 $groupName = "Remote Management Users"
+$VerbosePreference = "Continue"
+
 
 Push-Location(Split-Path($MyInvocation.MyCommand.Path))
+
+.\ConfigureRemotingForAnsible.ps1
 
 .\create-group.ps1 $groupName
 echo "Local group $groupname added"
