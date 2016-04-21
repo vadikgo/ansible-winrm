@@ -11,7 +11,7 @@ $sid=(New-Object Security.Principal.NTAccount $SamAccountName).Translate([Securi
 
 $args = @("set",
           "winrm/config/service",
-          -join("@{RootSDDL=`"O:NSG:BAD:P(A;;GX;;;", $sid, ")(A;;GA;;;BA)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD))`"}")
+          "@{RootSDDL=`"O:NSG:BAD:P(A;;GX;;;$sid)(A;;GA;;;BA)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD))`"}"
 )
 
 &"C:\Windows\System32\winrm.cmd" $args
