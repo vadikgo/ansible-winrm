@@ -5,7 +5,7 @@ $groupName = "Remote Management Users"
 Push-Location(Split-Path($MyInvocation.MyCommand.Path))
 
 .\create-group.ps1 $groupName
-echo "Local group", $groupname, "added"
+echo "Local group $groupname added"
 
 .\Add-PoShEndpointAccess.ps1 -SamAccountName $groupName -EndpointName Microsoft.PowerShell
 
