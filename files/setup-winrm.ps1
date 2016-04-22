@@ -1,5 +1,12 @@
-$SB={
+# Configure Windows for remote WinRM
+# setup-winrm.ps {pcname1}
+# pcname1 - remote windows hostname, empty for current host
 
+Param (
+    [string]$HostName = $env:COMPUTERNAME
+)
+
+$SB={
 
 $groupName = "Remote Management Users"
 $VerbosePreference = "Continue"
@@ -516,7 +523,7 @@ Set-WmiNamespaceSecurity root/cimv2 add $groupName Enable,RemoteAccess
 Get-Service -Name WinRM | Restart-Service
 }
 
-$job = Invoke-Command -ScriptBlock $SB -ComputerName SBT-OASIB-248,SBT-OASIB-249,SBT-OASIB-250,SBT-OASIB-251  -AsJob
+$job = Invoke-Command -ScriptBlock $SB -ComputerName $HostName -AsJob
 Get-Job | Wait-Job
 $out = Receive-Job -Job $job
 Get-Job | Remove-Job
