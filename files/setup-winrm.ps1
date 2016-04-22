@@ -9,7 +9,7 @@ Param (
 $SB={
 
 $groupName = "Remote Management Users"
-$VerbosePreference = "Continue"
+#$VerbosePreference = "Continue"
 
 
 
@@ -502,28 +502,42 @@ Process {
     }
 }}
 
+echo "Enable WinRM on host"
 ConfigureRemotingForAnsible
 
-create-group $groupName
-echo "Local group $groupname added"
+try {
+  create-group $groupName
+  echo "Local group $groupname added"
+} catch {
+  echo "group $groupname already exist"
+}
 
+echo "Grant access to Microsoft.PowerShell"
 Add-PoShEndpointAccess -SamAccountName $groupName -EndpointName Microsoft.PowerShell
 
 $arc = (Get-WmiObject Win32_OperatingSystem).OSArchitecture
 if ( $arc -eq "64-bit") {
+  echo "Grant access to Microsoft.PowerShell32"
   Add-PoShEndpointAccess -SamAccountName $groupName -EndpointName Microsoft.PowerShell32
 }
 
+echo "Grant access to Microsoft.PowerShell.Workflow"
 Add-PoShEndpointAccess -SamAccountName $groupName -EndpointName Microsoft.PowerShell.Workflow
 
+echo "Grant access to configSDDL default"
 grant-winrm-remote $groupName
 
+echo "Grant access to WMI"
 Set-WmiNamespaceSecurity root/cimv2 add $groupName Enable,RemoteAccess
 
 Get-Service -Name WinRM | Restart-Service
 }
 
-$job = Invoke-Command -ScriptBlock $SB -ComputerName $HostName -AsJob
-Get-Job | Wait-Job
-$out = Receive-Job -Job $job
-Get-Job | Remove-Job
+if ($HostName -eq '.' -OR $HostName -eq "$($env:COMPUTERNAME)") {
+  &$SB
+} else {
+  $job = Invoke-Command -ScriptBlock $SB -ComputerName $HostName -AsJob
+  Get-Job | Wait-Job
+  $out = Receive-Job -Job $job
+  Get-Job | Remove-Job
+}
